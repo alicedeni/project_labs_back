@@ -179,36 +179,35 @@ class ReportEvaluator:
 
     def _parse_results(self, text, author):
         results = []
-        lines = text.split('###')
+        blocks = [block.strip() for block in text.split('###') if block.strip()]
         
-        print(lines)
-        for block in lines[1:]:
-            if not block.strip():
+        for block in blocks:
+            if not block:
                 continue
-                
-            parts = block.split('\n')
-            criteria = parts[0].replace('Критерий:', '').strip()
-            score = 0.0
-            comment = []
-            print(parts)
-            for line in parts[1:]:
-                line = line.strip()
-                print('&', line)
-                if line.startswith('Штраф:'):
-                    continue
-                if line.startswith('Итоговый балл:'):
-                    score = float(line.split(':')[-1].split('/')[0].strip())
-                elif line.startswith('Комментарий к оценке:'):
-                    comment.append(line.split(':', 1)[-1].strip())
-                elif line.startswith('-'):
-                    comment.append(line[1:].strip())
             
-            results.append({
-                "criteria": criteria,
-                "score": score,
-                "comment": '\n'.join(comment)
-            })
-        print(results)
+            lines = [line.strip() for line in block.split('\n') if line.strip()]
+            criteria = ""
+            comment = []
+            penalty = ""
+            score = 0.0
+            for line in lines:
+                if line.startswith('Критерий:'):
+                    criteria = line.replace('Критерий:', '').strip()
+                elif line.startswith('Комментарий к оценке:'):
+                    comment.append(line.replace('Комментарий к оценке:', '').strip())
+                elif line.startswith('Штраф:'):
+                    penalty = line.replace('Штраф:', '').strip()
+                elif line.startswith('Итоговый балл:'):
+                    score_str = line.replace('Итоговый балл:', '').strip()
+                    score = float(score_str.split()[0])
+            
+            if criteria:
+                results.append({
+                    "criteria": criteria,
+                    "score": score,
+                    "comment": '\n'.join(comment),
+                })
+        
         return {"status": "success", "results": results, "author": author}
 
 
