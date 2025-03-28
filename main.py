@@ -16,7 +16,7 @@ from bot import bot
 import urllib.parse
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.config['UPLOAD_FOLDER_1'] = 'static/method'
 app.config['UPLOAD_FOLDER_2'] = 'static/labs'
