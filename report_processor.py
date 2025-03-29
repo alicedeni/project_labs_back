@@ -180,6 +180,7 @@ class ReportEvaluator:
     def _parse_results(self, text, author):
         results = []
         blocks = [block.strip() for block in text.split('###') if block.strip()]
+        print(blocks)
         
         for block in blocks:
             if not block:
